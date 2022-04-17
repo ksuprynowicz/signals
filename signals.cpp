@@ -1,5 +1,7 @@
 #include "signals.h"
 
+bool are_switch_routing_models_initialized = false;
+
 using namespace std;
 
 void create_example_track(RailroadState_t &rS){
@@ -96,4 +98,150 @@ void connect_blocks(RailroadState_t &rS, int index_1, int slot_1, int index_2, i
         throw("Block index out of range");
     }
     //TODO
+}
+
+int add_signal(RailroadState_t &rS, SignalType_t signal_type, SignalState_t signal_state, int block_idx){
+    Signal_t signal;
+    signal.signal_type = signal_type;
+    signal.signal_state = signal_state;
+    signal.block_idx = block_idx;
+    rS.signals.push_back(signal);
+    int signal_idx = rS.signals.size() - 1;
+    rS.blocks[block_idx].signalIndices.push_back(signal_idx);
+    return signal_idx;
+}
+
+void init_switch_routing_models();
+
+int add_switch(RailroadState_t &rS, SwitchState_t switch_state, const vector<SwitchRoute_t> *route_set, int block_idx){
+    if(!are_switch_routing_models_initialized){
+        init_switch_routing_models();
+        are_switch_routing_models_initialized = true;
+    }
+    Switch_t sw;
+    sw.state = switch_state;
+    sw.routes = route_set;
+    sw.block_idx = block_idx;
+    rS.switches.push_back(sw);
+    int switch_idx = rS.switches.size() - 1;
+    rS.blocks[block_idx].switchIndices.push_back(switch_idx);
+    return switch_idx;
+}
+
+int add_magnet(RailroadState_t &rS, MagnetState_t state, int block_idx){
+    Magnet_t magnet;
+    magnet.state = state;
+    magnet.block_idx = block_idx;
+    rS.magnets.push_back(magnet);
+    int magnet_idx = rS.magnets.size() - 1;
+    rS.blocks[block_idx].mangetIndices.push_back(magnet_idx);
+    return magnet_idx;
+}
+
+//Default routing models for different kind of blocks:
+
+//BLOCK_SHAPE_2L_1R
+//Left to right
+//Switch not used
+
+//Right to left
+vector<SwitchRoute_t> sw_route_2L_1R_RtL;
+
+//BLOCK_SHAPE_2L_2R
+//Left to right
+vector<SwitchRoute_t> sw_route_2L_2R_LtR;
+
+//Right to left
+vector<SwitchRoute_t> sw_route_2L_2R_RtL;
+
+//BLOCK_SHAPE_1L_2R
+//Left to right
+vector<SwitchRoute_t> sw_route_1L_2R_LtR;
+
+//Right to left
+//Switch not used
+
+//BLOCK_SHAPE_2L_3R
+//Left to right
+//TODO
+
+//Right to left
+//TODO
+
+//BLOCK_SHAPE_3L_2R
+//Left to right
+//TODO
+
+//Right to left
+//TODO
+
+void init_switch_routing_models(){
+    //BLOCK_SHAPE_2L_1R
+    //Left to right
+
+    //Right to left
+    {
+        SwitchRoute_t r1;
+        r1.input = 2;
+        r1.output_forward = 0;
+        r1.output_turn = 1;
+        sw_route_2L_1R_RtL.push_back(r1);
+    }
+
+    //BLOCK_SHAPE_2L_2R
+    //Left to right
+    {
+        SwitchRoute_t r1;
+        r1.input = 0;
+        r1.output_forward = 2;
+        r1.output_turn = 3;
+        SwitchRoute_t r2;
+        r2.input = 1;
+        r2.output_forward = 3;
+        r2.output_turn = 2;
+        sw_route_2L_2R_LtR.push_back(r1);
+        sw_route_2L_2R_LtR.push_back(r2);
+    }
+
+    //Right to left
+    {
+        SwitchRoute_t r1;
+        r1.input = 2;
+        r1.output_forward = 0;
+        r1.output_turn = 1;
+        SwitchRoute_t r2;
+        r2.input = 3;
+        r2.output_forward = 1;
+        r2.output_turn = 0;
+        sw_route_2L_2R_RtL.push_back(r1);
+        sw_route_2L_2R_RtL.push_back(r2);
+    }
+
+    //BLOCK_SHAPE_1L_2R
+    //Left to right
+    {
+        SwitchRoute_t r1;
+        r1.input = 0;
+        r1.output_forward = 1;
+        r1.output_turn = 2;
+        sw_route_1L_2R_LtR.push_back(r1);
+    }
+
+    //Right to left
+    //Switch not used
+
+    //BLOCK_SHAPE_2L_3R
+    //Left to right
+    //TODO
+
+    //Right to left
+    //TODO
+
+    //BLOCK_SHAPE_3L_2R
+    //Left to right
+    //TODO
+
+    //Right to left
+    //TODO
+
 }

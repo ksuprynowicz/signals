@@ -26,6 +26,7 @@ typedef enum {
 typedef struct Signal {
     SignalType_t signal_type;
     SignalState_t signal_state;
+    int block_idx;
 } Signal_t;
 
 typedef enum {
@@ -33,8 +34,16 @@ typedef enum {
     SWITCH_ST_TURN
 } SwitchState_t;
 
+typedef struct SwitchRoute {
+    int input;
+    int output_forward;
+    int output_turn;
+} SwitchRoute_t;
+
 typedef struct Switch {
-    SwitchState_t switch_state;
+    SwitchState_t state;
+    const vector<SwitchRoute_t> *routes;
+    int block_idx;
 } Switch_t;
 
 typedef enum {
@@ -46,6 +55,11 @@ typedef enum {
     MAGNET_EV_ON,
     MAGNET_EV_OFF
 } MagnetEvent_t;
+
+typedef struct Magnet {
+    MagnetState_t state;
+    int block_idx;
+} Magnet_t;
 
 typedef enum {
     BLOCK_SHAPE_DRAIN_1,
@@ -70,6 +84,7 @@ typedef enum {
 typedef struct Block {
     std::vector<int> signalIndices;
     std::vector<int> switchIndices;
+    std::vector<int> mangetIndices;
     std::vector<int> sharedBlocksIndices; // Blocks that share space with a given block
     std::vector<int> connectedBlocksIndices;
     BlockState_t blockState;
@@ -113,6 +128,7 @@ typedef struct OutputEvent {
 typedef struct RailoradState {
     std::vector<Signal_t> signals;
     std::vector<Switch_t> switches;
+    std::vector<Magnet_t> magnets;
     std::vector<Block_t> blocks;
     std::vector<Route_t> routes;
 
@@ -120,6 +136,12 @@ typedef struct RailoradState {
     std::deque<OutputEvent_t> outputEvents;
 } RailroadState_t;
 
+
+int add_signal(RailroadState_t &rS, SignalType_t signal_type, int block_idx);
+
+int add_switch(RailroadState_t &rS, int block_idx);
+
+int add_magnet(RailroadState_t &rS, int block_idx);
 
 void add_input_event(RailroadState_t &rS, InputEvent_t &event);
 void add_output_event(RailroadState_t &rS, OutputEvent_t &event);
@@ -141,3 +163,40 @@ void load_track_from_file(RailroadState_t &rS, std::string filename);
 int add_block(RailroadState_t &rS, BlockShape_t shape, BlockDirection_t direction);
 void make_blocks_shared(RailroadState_t &rS, int index_1, int index_2);
 void connect_blocks(RailroadState_t &rS, int index_1, int slot_1, int index_2, int slot_2);
+
+//Default routing models for different kind of blocks:
+
+//BLOCK_SHAPE_2L_1R
+//Left to right
+//Switch not used
+
+//Right to left
+extern vector<SwitchRoute_t> sw_route_2L_1R_RtL;
+
+//BLOCK_SHAPE_2L_2R
+//Left to right
+extern vector<SwitchRoute_t> sw_route_2L_2R_LtR;
+
+//Right to left
+extern vector<SwitchRoute_t> sw_route_2L_2R_RtL;
+
+//BLOCK_SHAPE_1L_2R
+//Left to right
+extern vector<SwitchRoute_t> sw_route_1L_2R_LtR;
+
+//Right to left
+//Switch not used
+
+//BLOCK_SHAPE_2L_3R
+//Left to right
+//TODO
+
+//Right to left
+//TODO
+
+//BLOCK_SHAPE_3L_2R
+//Left to right
+//TODO
+
+//Right to left
+//TODO
