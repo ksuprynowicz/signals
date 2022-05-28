@@ -11,7 +11,7 @@ void init_railroad_state(RailroadState_t &rS){
 void create_example_track(RailroadState_t &rS){
     // 0,1 - Main station top
     int b0 = add_block(rS, BLOCK_SHAPE_DRAIN_1, BLOCK_DIR_TO_RIGHT);
-    
+
     int b1 = add_block(rS, BLOCK_SHAPE_DRAIN_1, BLOCK_DIR_TO_LEFT);
     make_blocks_shared(rS, b0,b1);
     // 2,3 - Main station bottom
@@ -70,6 +70,8 @@ int add_block(RailroadState_t &rS, BlockShape_t shape, BlockDirection_t directio
     block.blockShape = shape;
     block.blockState = BLOCK_ST_FREE;
     block.blockDirection = direction;
+    block.is_reserved = false;
+    block.is_occupied = false;
     rS.blocks.push_back(block);
     return rS.blocks.size()-1;
 }

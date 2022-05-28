@@ -91,6 +91,8 @@ typedef struct Block {
     BlockState_t blockState;
     BlockShape_t blockShape;
     BlockDirection_t blockDirection;
+    bool is_reserved;
+    bool is_occupied;
 } Block_t;
 
 /*typedef enum {
@@ -100,8 +102,6 @@ typedef struct Block {
 
 typedef struct Route {
     std::vector<int> blockIndices;
-    bool is_reserved;
-    bool is_occupied;
 } Route_t;
 
 typedef enum {
