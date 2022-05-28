@@ -4,9 +4,14 @@ bool are_switch_routing_models_initialized = false;
 
 using namespace std;
 
+void init_railroad_state(RailroadState_t &rS){
+    rS.shutdown = false;
+}
+
 void create_example_track(RailroadState_t &rS){
     // 0,1 - Main station top
     int b0 = add_block(rS, BLOCK_SHAPE_DRAIN_1, BLOCK_DIR_TO_RIGHT);
+    
     int b1 = add_block(rS, BLOCK_SHAPE_DRAIN_1, BLOCK_DIR_TO_LEFT);
     make_blocks_shared(rS, b0,b1);
     // 2,3 - Main station bottom

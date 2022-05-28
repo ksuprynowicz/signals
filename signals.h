@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <deque>
+#include <queue>
 #include <string>
 
 typedef enum {
@@ -46,19 +46,20 @@ typedef struct Switch {
     int block_idx;
 } Switch_t;
 
-typedef enum {
+/*typedef enum {
     MAGNET_ST_ON,
     MAGNET_ST_OFF
-} MagnetState_t;
+} MagnetState_t;*/
 
-typedef enum {
+/*typedef enum {
     MAGNET_EV_ON,
     MAGNET_EV_OFF
-} MagnetEvent_t;
+} MagnetEvent_t;*/
 
 typedef struct Magnet {
-    MagnetState_t state;
-    int block_idx;
+    //MagnetState_t state;
+    int block_to_free_idx;
+    int block_to_occupy_idx;
 } Magnet_t;
 
 typedef enum {
@@ -104,16 +105,16 @@ typedef struct Route {
 } Route_t;
 
 typedef enum {
-    INPUT_EVENT_MAGNET_ON,
-    INPUT_EVENT_MAGNET_OFF,
+    INPUT_EVENT_MAGNET_TRIGGER,
     INPUT_EVENT_SWITCH_FORWARD,
-    INPUT_EVENT_SWITCH_TURN
-//    INPUT_EVENT_ROUTE_ON,
-//    INPUT_EVENT_ROUTE_OFF
+    INPUT_EVENT_SWITCH_TURN,
+    INPUT_EVENT_ROUTE_ON
 } InputEventType_t;
 
 typedef struct InputEvent {
-    int event_entity_idx;
+    InputEventType_t type;
+    int entity_idx;
+    int data;
 } InputEvent_t;
 
 typedef enum {
@@ -121,8 +122,9 @@ typedef enum {
 } OutputEventType_t;
 
 typedef struct OutputEvent {
-    int event_entity_idx;
-    int out_event_data;
+    OutputEventType_t type;
+    int entity_idx;
+    int data;
 } OutputEvent_t;
 
 typedef struct RailoradState {
@@ -132,10 +134,13 @@ typedef struct RailoradState {
     std::vector<Block_t> blocks;
     std::vector<Route_t> routes;
 
-    std::deque<InputEvent_t> inputEvents;
-    std::deque<OutputEvent_t> outputEvents;
+    std::queue<InputEvent_t> inputEvents;
+    std::queue<OutputEvent_t> outputEvents;
+
+    bool shutdown;
 } RailroadState_t;
 
+void init_railroad_state(RailroadState_t &rS);
 
 int add_signal(RailroadState_t &rS, SignalType_t signal_type, int block_idx);
 
@@ -146,11 +151,11 @@ int add_magnet(RailroadState_t &rS, int block_idx);
 void add_input_event(RailroadState_t &rS, InputEvent_t &event);
 void add_output_event(RailroadState_t &rS, OutputEvent_t &event);
 
-bool process_input_event(RailroadState_t &rS);
-bool process_output_event(RailroadState_t &rS);
+bool process_input_event(RailroadState_t &rS, InputEvent_t );
+bool process_output_event(RailroadState_t &rS, OutputEvent_t );
 
 bool reserve_route(RailroadState_t &rS, int route_idx);
-bool free_route(RailroadState_t &rS, int route_idx);
+//bool free_route(RailroadState_t &rS, int route_idx);
 
 void reserve_block(RailroadState_t &rS, int block_idx);
 void free_block(RailroadState_t &rS, int block_idx);
