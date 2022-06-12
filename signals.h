@@ -7,6 +7,7 @@
 typedef enum {
     SIGNAL_LIGHT_MAIN,
     SIGNAL_LIGHT_PRE,
+    SIGNAL_LIGHT_PRE_HV,
     SIGNAL_LIGHT_DWARF,
     SIGNAL_SHAPE_DISC
 } SignalType_t;
@@ -60,10 +61,12 @@ typedef struct Magnet {
     //MagnetState_t state;
     int block_to_free_idx;
     int block_to_occupy_idx;
+    int main_signal_idx;
 } Magnet_t;
 
 typedef enum {
-    BLOCK_SHAPE_DRAIN_1,
+    BLOCK_SHAPE_SINK_1,
+    BLOCK_SHAPE_SOURCE_1,
     BLOCK_SHAPE_1L_1R,
     BLOCK_SHAPE_2L_1R,
     BLOCK_SHAPE_2L_2R,
@@ -85,7 +88,8 @@ typedef enum {
 typedef struct Block {
     std::vector<int> signalIndices;
     std::vector<int> switchIndices;
-    std::vector<int> mangetIndices;
+    std::vector<int> mangetIndicesFree;
+    std::vector<int> mangetIndicesOccupy;
     std::vector<int> sharedBlocksIndices; // Blocks that share space with a given block
     std::vector<int> connectedBlocksIndices;
     BlockState_t blockState;
@@ -142,11 +146,11 @@ typedef struct RailoradState {
 
 void init_railroad_state(RailroadState_t &rS);
 
-int add_signal(RailroadState_t &rS, SignalType_t signal_type, int block_idx);
+int add_signal(RailroadState_t &rS, SignalType_t signal_type, bool is_manual, int block_idx);
 
 int add_switch(RailroadState_t &rS, int block_idx);
 
-int add_magnet(RailroadState_t &rS, int block_idx);
+int add_magnet(RailroadState_t &rS, int main_signal_idx, int block_to_free_idx, int block_to_occupy_idx);
 
 void add_input_event(RailroadState_t &rS, InputEvent_t &event);
 void add_output_event(RailroadState_t &rS, OutputEvent_t &event);

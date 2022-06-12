@@ -9,6 +9,115 @@ void init_railroad_state(RailroadState_t &rS){
 }
 
 void create_example_track(RailroadState_t &rS){
+    int L4 = add_block(rS, BLOCK_SHAPE_SINK_1, BLOCK_DIR_TO_LEFT);
+    int L3 = add_block(rS, BLOCK_SHAPE_SOURCE_1, BLOCK_DIR_TO_LEFT);
+    connect_blocks(rS, L3, 0, L4, 0);
+
+    int L10 = add_block(rS, BLOCK_SHAPE_SINK_1, BLOCK_DIR_TO_LEFT);
+    int L9 = add_block(rS, BLOCK_SHAPE_1L_1R, BLOCK_DIR_TO_LEFT);
+    connect_blocks(rS, L10, 0, L9, 0);
+    int L8 = add_block(rS, BLOCK_SHAPE_1L_1R, BLOCK_DIR_TO_LEFT);
+    connect_blocks(rS, L9, 1, L8, 0);
+    int LY7 = add_block(rS, BLOCK_SHAPE_1L_2R, BLOCK_DIR_TO_LEFT);
+    connect_blocks(rS, L8, 1, LY7, 0);
+    int LY13 = add_block(rS, BLOCK_SHAPE_2L_1R, BLOCK_DIR_TO_LEFT);
+    connect_blocks(rS, LY7, 1, LY13, 0);
+    connect_blocks(rS, LY7, 2, LY13, 1);
+    int L12 = add_block(rS, BLOCK_SHAPE_1L_1R, BLOCK_DIR_TO_LEFT);
+    connect_blocks(rS, LY13, 2, L12, 0);
+    int L11 = add_block(rS, BLOCK_SHAPE_SOURCE_1, BLOCK_DIR_TO_LEFT);
+    connect_blocks(rS, L12, 1, L11, 0);
+
+    int L14 = add_block(rS, BLOCK_SHAPE_SINK_1, BLOCK_DIR_TO_LEFT);
+    int L15 = add_block(rS, BLOCK_SHAPE_SOURCE_1, BLOCK_DIR_TO_LEFT);
+    connect_blocks(rS, L14, 0, L15, 0);
+
+
+    int R2 = add_block(rS, BLOCK_SHAPE_SOURCE_1, BLOCK_DIR_TO_RIGHT);
+    int R3 = add_block(rS, BLOCK_SHAPE_SOURCE_1, BLOCK_DIR_TO_RIGHT);
+    int RX4 = add_block(rS, BLOCK_SHAPE_2L_2R, BLOCK_DIR_TO_RIGHT);
+    connect_blocks(rS, R2, 0, RX4, 0);
+    connect_blocks(rS, R3, 0, RX4, 1);
+    int R5 = add_block(rS, BLOCK_SHAPE_SINK_1, BLOCK_DIR_TO_RIGHT);
+    connect_blocks(rS, RX4, 3, R5, 0);
+    int R6 = add_block(rS, BLOCK_SHAPE_1L_1R, BLOCK_DIR_TO_RIGHT);
+    connect_blocks(rS, RX4, 2, R6, 0);
+    int RY7 = add_block(rS, BLOCK_SHAPE_1L_2R, BLOCK_DIR_TO_RIGHT);
+    connect_blocks(rS, R6, 1, RY7, 0);
+    int RY10 = add_block(rS, BLOCK_SHAPE_2L_1R, BLOCK_DIR_TO_RIGHT);
+    connect_blocks(rS, RY7, 1, RY10, 1);
+    connect_blocks(rS, RY7, 2, RY10, 0);
+    int R11 = add_block(rS, BLOCK_SHAPE_SINK_1, BLOCK_DIR_TO_RIGHT);
+    connect_blocks(rS, RY10, 2, R11, 0);
+
+    int R12 = add_block(rS, BLOCK_SHAPE_SOURCE_1, BLOCK_DIR_TO_RIGHT);
+    int R13 = add_block(rS, BLOCK_SHAPE_SINK_1, BLOCK_DIR_TO_RIGHT);
+    connect_blocks(rS, R12, 0, R13, 0);
+
+    make_blocks_shared(rS, RX4, L8);
+    make_blocks_shared(rS, RX4, L9);
+    make_blocks_shared(rS, R6, LY7);
+    make_blocks_shared(rS, RY7, LY13);
+    make_blocks_shared(rS, RY10, L12);
+
+    int H_InHB2 = add_signal(rS, SIGNAL_LIGHT_MAIN, true, L10);
+    int H_InHB3 = add_signal(rS, SIGNAL_LIGHT_MAIN, true, L4);
+    int H_L9 = add_signal(rS, SIGNAL_LIGHT_MAIN, false, L9);
+    int HV_InHB2 = add_signal(rS, SIGNAL_LIGHT_PRE_HV, false, L10);
+    int V_InHB3 = add_signal(rS, SIGNAL_LIGHT_PRE, false, L4);
+    int H_L8 = add_signal(rS, SIGNAL_LIGHT_MAIN, false, L8);
+    int HV_L9 = add_signal(rS, SIGNAL_LIGHT_PRE_HV, false, L9);
+    int H_ExFK1 = add_signal(rS, SIGNAL_LIGHT_MAIN, false, LY7);
+    int HV_YY = add_signal(rS, SIGNAL_LIGHT_PRE_HV, false, LY7);
+    int H_ExFK2 = add_signal(rS, SIGNAL_LIGHT_MAIN, false, LY7);
+    int HV_ZZ = add_signal(rS, SIGNAL_LIGHT_PRE_HV, false, LY7);
+    int H_InFK2 = add_signal(rS, SIGNAL_LIGHT_MAIN, false, LY13);
+    int HV_Z = add_signal(rS, SIGNAL_LIGHT_PRE_HV, false, LY13);
+    int H_ExES1 = add_signal(rS, SIGNAL_LIGHT_MAIN, true, L12);
+
+    int H_ExES2 = add_signal(rS, SIGNAL_LIGHT_MAIN, true, L14);
+
+
+    int H_ExHB3 = add_signal(rS, SIGNAL_LIGHT_MAIN, true, RX4);
+    int HV_X = add_signal(rS, SIGNAL_LIGHT_PRE_HV, false, RX4);
+    int H_ExHB4 = add_signal(rS, SIGNAL_LIGHT_MAIN, true, RX4);
+    int HV_NX = add_signal(rS, SIGNAL_LIGHT_PRE_HV, false, RX4);
+    int H_InHB3 = add_signal(rS, SIGNAL_LIGHT_MAIN, false, R5);
+    int H_R6 = add_signal(rS, SIGNAL_LIGHT_MAIN, false, R6);
+    int HV_InFK1 = add_signal(rS, SIGNAL_LIGHT_PRE_HV, false, RY7);
+    int H_InFK1 = add_signal(rS, SIGNAL_LIGHT_MAIN, false, RY7);
+    int HV_Y = add_signal(rS, SIGNAL_LIGHT_PRE_HV, false, HV_Y);
+    int H_ExFK3 = add_signal(rS, SIGNAL_LIGHT_MAIN, false, RY10);
+    int H_ExFK4 = add_signal(rS, SIGNAL_LIGHT_MAIN, false, RY10);
+    int V_InES1 = add_signal(rS, SIGNAL_LIGHT_PRE, false, R11);
+    int H_InES1 = add_signal(rS, SIGNAL_LIGHT_MAIN, true, R11);
+
+    int V_InES2 = add_signal(rS, SIGNAL_LIGHT_PRE, false, R13);
+    int H_InES2 = add_signal(rS, SIGNAL_LIGHT_MAIN, true, R13);
+
+    //TODO: Figure out what to connect the signals to
+    int mH_InHB2 = add_magnet(rS, H_InHB2, L9, L10);
+    int mH_InHB3 = add_magnet(rS, H_InHB3, L4, L3);
+    int mH_L9 = add_magnet(rS, H_L9, L8, L9);
+    int mH_L8 = add_magnet(rS, H_L8, LY7, L8);
+    int mH_ExFK1 = add_magnet(rS, H_ExFK1, LY13, LY7);
+    int mH_ExFK2 = add_magnet(rS, H_ExFK2, LY13, LY7);
+    int mH_InFK2 = add_magnet(rS, H_InFK2, L12, LY13);
+    int mH_ExES1 = add_magnet(rS, H_ExES1, L11, L12);
+    int mH_ExES2 = add_magnet(rS, H_ExES2, L15, L14);
+    int mH_ExHB3 = add_magnet(rS, H_ExHB3, R2, RX4);
+    int mH_ExHB4 = add_magnet(rS, H_ExHB4, R3, RX4);
+    int mH_InHB3 = add_magnet(rS, H_InHB3, RX4, R5);
+    int mH_R6 = add_magnet(rS, H_R6, RX4, R6);
+    int mH_InFK1 = add_magnet(rS, H_InFK1, R6, RY7);
+    int mH_ExFK3 = add_magnet(rS, H_ExFK3, RY7, RY10);
+    int mH_ExFK4 = add_magnet(rS, H_ExFK4, RY7, RY10);
+    int mH_InES1 = add_magnet(rS, H_InES1, RY10, R11);
+    int mH_InES2 = add_magnet(rS, H_InES2, R12, R13);
+
+}
+
+/*void create_example_track(RailroadState_t &rS){
     // 0,1 - Main station top
     int b0 = add_block(rS, BLOCK_SHAPE_DRAIN_1, BLOCK_DIR_TO_RIGHT);
 
@@ -63,7 +172,7 @@ void create_example_track(RailroadState_t &rS){
     connect_blocks(rS, b14, 1, b15, 0);
     connect_blocks(rS, b15, 1, b16, 0);
     connect_blocks(rS, b15, 2, b16, 1);
-}
+}*/
 
 int add_block(RailroadState_t &rS, BlockShape_t shape, BlockDirection_t direction){
     Block_t block;
@@ -135,13 +244,15 @@ int add_switch(RailroadState_t &rS, SwitchState_t switch_state, const vector<Swi
     return switch_idx;
 }
 
-int add_magnet(RailroadState_t &rS, MagnetState_t state, int block_idx){
+int add_magnet(RailroadState_t &rS, int main_signal_idx, int block_to_free_idx, int block_to_occupy_idx){
     Magnet_t magnet;
-    magnet.state = state;
-    magnet.block_idx = block_idx;
+    magnet.block_to_free_idx = block_to_free_idx;
+    magnet.block_to_occupy_idx = block_to_occupy_idx;
+    magnet.main_signal_idx = main_signal_idx;
     rS.magnets.push_back(magnet);
     int magnet_idx = rS.magnets.size() - 1;
-    rS.blocks[block_idx].mangetIndices.push_back(magnet_idx);
+    rS.blocks[block_to_free_idx].mangetIndicesFree.push_back(magnet_idx);
+    rS.blocks[block_to_occupy_idx].mangetIndicesOccupy.push_back(magnet_idx);
     return magnet_idx;
 }
 
