@@ -28,6 +28,8 @@ typedef struct Signal {
     SignalType_t signal_type;
     SignalState_t signal_state;
     int block_idx;
+    bool is_manual;
+    std::string name;
 } Signal_t;
 
 typedef enum {
@@ -43,8 +45,9 @@ typedef struct SwitchRoute {
 
 typedef struct Switch {
     SwitchState_t state;
-    const vector<SwitchRoute_t> *routes;
+    const std::vector<SwitchRoute_t> *routes;
     int block_idx;
+    std::string name;
 } Switch_t;
 
 /*typedef enum {
@@ -62,6 +65,7 @@ typedef struct Magnet {
     int block_to_free_idx;
     int block_to_occupy_idx;
     int main_signal_idx;
+    std::string name;
 } Magnet_t;
 
 typedef enum {
@@ -97,6 +101,7 @@ typedef struct Block {
     BlockDirection_t blockDirection;
     bool is_reserved;
     bool is_occupied;
+    std::string name;
 } Block_t;
 
 /*typedef enum {
@@ -106,13 +111,15 @@ typedef struct Block {
 
 typedef struct Route {
     std::vector<int> blockIndices;
+    std::string name;
 } Route_t;
 
 typedef enum {
     INPUT_EVENT_MAGNET_TRIGGER,
     INPUT_EVENT_SWITCH_FORWARD,
     INPUT_EVENT_SWITCH_TURN,
-    INPUT_EVENT_ROUTE_ON
+    INPUT_EVENT_ROUTE_ON,
+    INPUT_EVENT_MANUAL_LIGHT
 } InputEventType_t;
 
 typedef struct InputEvent {
@@ -144,19 +151,30 @@ typedef struct RailoradState {
     bool shutdown;
 } RailroadState_t;
 
+int get_block_idx(RailroadState_t &rS, std::string name);
+int get_route_idx(RailroadState_t &rS, std::string name);
+int get_magnet_idx(RailroadState_t &rS, std::string name);
+int get_signal_idx(RailroadState_t &rS, std::string name);
+
+int add_route(RailroadState_t &rS, std::string name);
+
+void add_block_to_route(RailroadState_t &rS, int route_idx, int block_idx);
+
 void init_railroad_state(RailroadState_t &rS);
 
-int add_signal(RailroadState_t &rS, SignalType_t signal_type, bool is_manual, int block_idx);
+int add_signal(RailroadState_t &rS, std::string name, SignalType_t signal_type, SignalState_t signal_state, bool is_manual, int block_idx);
 
-int add_switch(RailroadState_t &rS, int block_idx);
+int add_switch(RailroadState_t &rS, std::string name, int block_idx);
 
-int add_magnet(RailroadState_t &rS, int main_signal_idx, int block_to_free_idx, int block_to_occupy_idx);
+int add_magnet(RailroadState_t &rS, std::string name, int main_signal_idx, int block_to_free_idx, int block_to_occupy_idx);
 
 void add_input_event(RailroadState_t &rS, InputEvent_t &event);
 void add_output_event(RailroadState_t &rS, OutputEvent_t &event);
 
-bool process_input_event(RailroadState_t &rS, InputEvent_t );
-bool process_output_event(RailroadState_t &rS, OutputEvent_t );
+void process_input_event(RailroadState_t &rS, InputEvent_t &event);
+void process_output_event(RailroadState_t &rS, OutputEvent_t &event);
+
+void change_signal_state(RailroadState_t &rS, int signal_idx, SignalState_t state);
 
 bool reserve_route(RailroadState_t &rS, int route_idx);
 //bool free_route(RailroadState_t &rS, int route_idx);
@@ -167,12 +185,18 @@ void free_block(RailroadState_t &rS, int block_idx);
 void occupy_block(RailroadState_t &rS, int block_idx);
 void leave_block(RailroadState_t &rS, int block_idx);
 
+void magnet_trigger(RailroadState_t &rS, int magnet_idx);
+
 void create_example_track(RailroadState_t &rS);
+
+void create_test_event_queue(RailroadState_t &rS, std::queue<InputEvent_t> &list);
+
 void load_track_from_file(RailroadState_t &rS, std::string filename);
-int add_block(RailroadState_t &rS, BlockShape_t shape, BlockDirection_t direction);
+int add_block(RailroadState_t &rS, std::string name, BlockShape_t shape, BlockDirection_t direction);
 void make_blocks_shared(RailroadState_t &rS, int index_1, int index_2);
 void connect_blocks(RailroadState_t &rS, int index_1, int slot_1, int index_2, int slot_2);
 
+//Routing modelos will be necessary later to check if the switch is in the right position
 //Default routing models for different kind of blocks:
 
 //BLOCK_SHAPE_2L_1R
@@ -180,18 +204,18 @@ void connect_blocks(RailroadState_t &rS, int index_1, int slot_1, int index_2, i
 //Switch not used
 
 //Right to left
-extern vector<SwitchRoute_t> sw_route_2L_1R_RtL;
+extern std::vector<SwitchRoute_t> sw_route_2L_1R_RtL;
 
 //BLOCK_SHAPE_2L_2R
 //Left to right
-extern vector<SwitchRoute_t> sw_route_2L_2R_LtR;
+extern std::vector<SwitchRoute_t> sw_route_2L_2R_LtR;
 
 //Right to left
-extern vector<SwitchRoute_t> sw_route_2L_2R_RtL;
+extern std::vector<SwitchRoute_t> sw_route_2L_2R_RtL;
 
 //BLOCK_SHAPE_1L_2R
 //Left to right
-extern vector<SwitchRoute_t> sw_route_1L_2R_LtR;
+extern std::vector<SwitchRoute_t> sw_route_1L_2R_LtR;
 
 //Right to left
 //Switch not used
