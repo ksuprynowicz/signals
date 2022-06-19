@@ -90,7 +90,7 @@ void create_example_track(RailroadState_t &rS){
     int H_R6 = add_signal(rS, "H_R6", SIGNAL_LIGHT_MAIN, s_state_default, false, R6);
     int HV_InFK1 = add_signal(rS, "HV_InFK1", SIGNAL_LIGHT_PRE_HV, s_state_default, false, RY7);
     int H_InFK1 = add_signal(rS, "H_InFK1", SIGNAL_LIGHT_MAIN, s_state_default, false, RY7);
-    int HV_Y = add_signal(rS, "HV_Y", SIGNAL_LIGHT_PRE_HV, s_state_default, false, HV_Y);
+    int HV_Y = add_signal(rS, "HV_Y", SIGNAL_LIGHT_PRE_HV, s_state_default, false, RY7);
     int H_ExFK3 = add_signal(rS, "H_ExFK3", SIGNAL_LIGHT_MAIN, s_state_default, false, RY10);
     int H_ExFK4 = add_signal(rS, "H_ExFK4", SIGNAL_LIGHT_MAIN, s_state_default, false, RY10);
     int V_InES1 = add_signal(rS, "V_InES1", SIGNAL_LIGHT_PRE, s_state_default, false, R11);
@@ -392,6 +392,10 @@ void process_input_event(RailroadState_t &rS, InputEvent_t &event){
             //TODO: check if route was succesfully reserved and emit GUI output event
             reserve_route(rS, event.entity_idx);
             break;
+        case INPUT_EVENT_MANUAL_SIGNAL:
+            cout << "Manual signal: " << rS.signals[event.entity_idx].name << "\n";
+            //TODO:
+            break;
     }
 }
 
@@ -411,6 +415,7 @@ void change_signal_state(RailroadState_t &rS, int signal_idx, SignalState_t stat
         event.type = OUTPUT_EVENT_T_SIGNAL_CHANGE_STATE;
         event.entity_idx = signal_idx;
         event.data = state;
+        add_output_event(rS, event);
     }
 }
 
@@ -477,7 +482,7 @@ void leave_block(RailroadState_t &rS, int block_idx){
 }
 
 void magnet_trigger(RailroadState_t &rS, int magnet_idx){
-    free_block(rS, rS.magnets[magnet_idx].block_to_free_idx);
+    leave_block(rS, rS.magnets[magnet_idx].block_to_free_idx);
     occupy_block(rS, rS.magnets[magnet_idx].block_to_occupy_idx);
 }
 

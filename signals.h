@@ -119,7 +119,7 @@ typedef enum {
     INPUT_EVENT_SWITCH_FORWARD,
     INPUT_EVENT_SWITCH_TURN,
     INPUT_EVENT_ROUTE_ON,
-    INPUT_EVENT_MANUAL_LIGHT
+    INPUT_EVENT_MANUAL_SIGNAL
 } InputEventType_t;
 
 typedef struct InputEvent {
